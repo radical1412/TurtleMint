@@ -76,9 +76,7 @@ public class FlipKart_POM {
                     System.out.println(URL+"\nSuccess");
                 }
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
