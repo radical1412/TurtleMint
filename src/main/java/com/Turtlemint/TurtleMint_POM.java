@@ -56,9 +56,8 @@ public class TurtleMint_POM {
     WebElement btnBack;
     @FindBy(xpath = "//button[@class = 'btn green submit']")
     WebElement btnTutOK;
-    @FindBy(xpath = "//div[img[@src = '/images/expert.svg']]")
-    WebElement btnToWait;
-
+    @FindBy(id = "proceed-btn")
+    WebElement btnBuyNow;
 
     public TurtleMint_POM(WebDriver driver) {
         this.driver = driver;
@@ -135,29 +134,25 @@ public class TurtleMint_POM {
         goNext();
     }
 
-    public void viewDetails(String provider) throws InterruptedException {
+    public void viewDetails(String provider) {
         waitPresent(By.xpath("//button[@class = 'btn green submit']"));
         while (!checkIntercepted(By.xpath("//button[@class = 'btn green submit']"))) {
             waitClickable(btnTutOK).click();
         }
-        JavascriptExecutor jse = (JavascriptExecutor) driver;
-        boolean a = jse.executeScript("return document.readyState").equals("complete");
-        boolean b = (Long) jse.executeScript("return jQuery.active") == 0;
-        System.out.println(a + "\n" + b);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//div[@class = 'loader']")));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='page']/div/div[4]/ui-view/div/div/div[4]/div/div/div[1]/div/div[2]")));
         String currentCompany = null;
-        while (!(a && b)) {
-            System.out.println("Inside While");
-            Thread.sleep(1000);
-        }
         List<WebElement> btnsViewDetails = driver.findElements(By.xpath("//div[contains(@class, 'layout-xs-column')]//button[@data-auto]"));
         if (btnsViewDetails.isEmpty()) {
-            softAssert.fail("There are no providers in this range.");
+            Assert.fail("There are no providers in this range.");
         } else {
             Iterator<WebElement> itr = btnsViewDetails.iterator();
             while (itr.hasNext()) {
                 currentCompany = itr.next().getAttribute("data-auto");
+                System.out.println(currentCompany);
                 if (currentCompany.contains(provider)) {
-                    driver.findElement(By.xpath("//div[contains(@class, 'layout-xs-column')]//button[@data-auto ='" + currentCompany + "']")).click();
+                    wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'layout-xs-column')]//button[@data-auto ='" + currentCompany + "']"))).click();
+                    Assert.assertTrue(waitPresent(By.id("proceed-btn")) && btnBuyNow.isDisplayed(), "View Details page did not load properly.");
                     break;
                 }
             }

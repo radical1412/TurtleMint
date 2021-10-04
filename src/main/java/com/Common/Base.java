@@ -30,10 +30,9 @@ public class Base {
     ExtentSparkReporter reporter;
     ExtentReports report;
     ExtentTest test;
-    //
     SoftAssert softAssert;
 
-    @BeforeTest
+    @BeforeClass
     public void setup() {
         WebDriverManager.chromedriver().setup();
         reporter = new ExtentSparkReporter("Reports\\ExtentReportResults.html");
@@ -72,7 +71,7 @@ public class Base {
         }
     }
 
-    @AfterTest
+    @AfterClass
     public void endReports(){
         report.flush();
     }
